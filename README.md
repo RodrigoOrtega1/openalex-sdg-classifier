@@ -42,5 +42,5 @@ curl -X POST \
 curl -X POST \
   http://127.0.0.1:5000/fetch-and-classify/ \
   -H 'Content-Type: application/json' \
-  -d '{"doi": "10.1038/s41586-021-03372-6"}'
+  -d '{"doi": "10.1016/j.jneumeth.2015.01.020"}'
 ```
