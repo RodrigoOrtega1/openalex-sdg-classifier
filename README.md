@@ -26,11 +26,24 @@ $ conda activate sdgclassifier
 ```
 $ python assets/download_nltk_data.py
 ```
-5. Correr aplicación
+Si se usa windows:
+```
+$ python .\assets\download_nltk_data.py
+```
+5. Crear un archivo .env con la ruta hacia el modelo  
+Ejemplo de archivo .env:
+```
+MODEL_PATH="./model/SDG-BERT-v1.1_mbert_multilabel_model_based_on_aurora_sdg_queries_v5.h5"
+```
+6. Correr aplicación
 ```
 $ python src/app.py
 ```
-6. Usar Postman o curl para enviar peticiones al url /classify/ o /fetch-and-classify/  
+Si se usa windows:
+```
+$ python .\src\app.py
+```
+7. Usar Postman o curl para enviar peticiones al url /classify/ o /fetch-and-classify/  
 Ejemplo:
 ```
 curl -X POST \
@@ -44,3 +57,4 @@ curl -X POST \
   -H 'Content-Type: application/json' \
   -d '{"doi": "10.1016/j.jneumeth.2015.01.020"}'
 ```
+**NOTA:** Dependiendo si se tiene una GPU y el modelo, se podrá instalar una versión diferente de la biblioteca tensorflow

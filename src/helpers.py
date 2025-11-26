@@ -159,6 +159,13 @@ def create_attention_masks(inputs):
 
 
 def prepare_input(abstracts):
+    """
+    Prepares the input for the model.
+    Args:
+        abstracts (list of str): List of abstracts to process.
+    Returns:
+        tf.Tensor, tf.Tensor: Input IDs and attention masks.
+    """
     ids = abstracts_to_ids(abstracts)
     padded_ids = pad_ids(ids)
     masks = create_attention_masks(padded_ids)
@@ -217,4 +224,3 @@ def get_predictions(abstract):
         # order by prediction
         response = sorted(response, key=lambda k: k['prediction'], reverse=True)
     return response
-
