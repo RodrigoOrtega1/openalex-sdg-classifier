@@ -1,24 +1,21 @@
-import boto3
-import tempfile
 from nltk import tokenize
 from transformers import BertTokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import load_model
+from tensorflow.keras.utils import custom_object_scope
 import tensorflow as tf
 from tensorflow import convert_to_tensor
 from transformers import TFBertModel
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
-load_dotenv('./.env')
+#load_dotenv('./.env')
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-uncased')
 
-# Load the ML model from s3
-s3 = boto3.client('s3')
-fp = tempfile.NamedTemporaryFile()
-s3.download_file('aurora-sdg-classifier', 'SDG-BERT-v1.1_mbert_multilabel_model_based_on_aurora_sdg_queries_v5.h5', fp.name)
-model = load_model(fp.name, custom_objects={'TFBertMainLayer': TFBertModel})
-fp.close()
+# Load the local model
+# TODO: Establecer la ruta del modelo como variable de entorno
+MODEL_PATH = './SDG-BERT-v1.1_mbert_multilabel_model_based_on_aurora_sdg_queries_v5.h5'
+model = load_model(MODEL_PATH, custom_objects={'TFBertModel': TFBertModel})
 
 goal_names = {
     "Goal 1": "No poverty",
