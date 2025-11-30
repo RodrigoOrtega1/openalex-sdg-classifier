@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import requests
 import re
 from helpers import get_predictions, deabstract
+from barplot import plot_sdg_barplot_with_images
 
 app = Flask(__name__)
 
@@ -43,6 +44,44 @@ def fetch_and_classify():
         
         result = get_predictions(text_to_classify)
         return jsonify({"text": text_to_classify, "predictions": result})
+    except requests.exceptions.HTTPError as e:
+        return jsonify({"msg": f"Failed to fetch data from OpenAlex: {str(e)}"}), e.response.status_code
+    except Exception as e:
+        return jsonify({"msg": str(e)}), 500
+    
+
+@app.route('/plot-predictions/', methods=['POST'])
+def plot_predictions():
+    """
+    Accepts a DOI, gets SDG predictions, and returns a bar plot image.
+    """
+    doi = request.json.get('doi', None)
+    if not doi:
+        return jsonify({"msg": "Missing 'doi' in request data"}), 400
+
+    try:
+        # Sanitize DOI
+        doi = re.sub(r'^https?://doi.org/', '', doi)
+        
+        # Fetch from OpenAlex
+        url = f"https://api.openalex.org/works/doi:{doi}"
+        r = requests.get(url)
+        r.raise_for_status()
+        
+        data = r.json()
+        title = data.get('title', '')
+        abstract = deabstract(data.get('abstract_inverted_index'))
+        
+        text_to_classify = f"{title}. {abstract}"
+        
+        predictions = get_predictions(text_to_classify)
+        
+        # Generate plot
+        plot_data = plot_sdg_barplot_with_images(predictions)
+        
+        # Return image in an HTML response
+        return f"<img src='data:image/png;base64,{plot_data}'/>"
+
     except requests.exceptions.HTTPError as e:
         return jsonify({"msg": f"Failed to fetch data from OpenAlex: {str(e)}"}), e.response.status_code
     except Exception as e:
