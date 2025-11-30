@@ -37,13 +37,29 @@ def fetch_and_classify():
         r.raise_for_status() # Raises an exception for bad status codes
         
         data = r.json()
+        
+        # Extract fields for classification
         title = data.get('title', '')
         abstract = deabstract(data.get('abstract_inverted_index'))
         
-        text_to_classify = f"{title}. {abstract}"
+        # Extract topics, keywords, and concepts
+        topics = []
+        if data.get('primary_topic'):
+            for key in ['subfield', 'field', 'domain']:
+                if data['primary_topic'].get(key) and data['primary_topic'][key].get('display_name'):
+                    topics.append(data['primary_topic'][key]['display_name'])
         
+        keywords = [kw.get('display_name') for kw in data.get('keywords', []) if kw.get('display_name')]
+        concepts = [c.get('display_name') for c in data.get('concepts', []) if c.get('display_name')]
+        mesh_terms = [m.get('descriptor') for m in data.get('mesh', []) if m.get('descriptor')]
+
+        # Combine all text fields
+        text_parts = [title, abstract] + topics + keywords + concepts + mesh_terms
+        text_to_classify = ". ".join(filter(None, text_parts))
+
         result = get_predictions(text_to_classify)
         return jsonify({"text": text_to_classify, "predictions": result})
+    
     except requests.exceptions.HTTPError as e:
         return jsonify({"msg": f"Failed to fetch data from OpenAlex: {str(e)}"}), e.response.status_code
     except Exception as e:
@@ -69,10 +85,25 @@ def plot_predictions():
         r.raise_for_status()
         
         data = r.json()
+        
+        # Extract fields for classification
         title = data.get('title', '')
         abstract = deabstract(data.get('abstract_inverted_index'))
         
-        text_to_classify = f"{title}. {abstract}"
+        # Extract topics, keywords, and concepts
+        topics = []
+        if data.get('primary_topic'):
+            for key in ['subfield', 'field', 'domain']:
+                if data['primary_topic'].get(key) and data['primary_topic'][key].get('display_name'):
+                    topics.append(data['primary_topic'][key]['display_name'])
+        
+        keywords = [kw.get('display_name') for kw in data.get('keywords', []) if kw.get('display_name')]
+        concepts = [c.get('display_name') for c in data.get('concepts', []) if c.get('display_name')]
+        mesh_terms = [m.get('descriptor') for m in data.get('mesh', []) if m.get('descriptor')]
+
+        # Combine all text fields
+        text_parts = [title, abstract] + topics + keywords + concepts + mesh_terms
+        text_to_classify = ". ".join(filter(None, text_parts))
         
         predictions = get_predictions(text_to_classify)
         

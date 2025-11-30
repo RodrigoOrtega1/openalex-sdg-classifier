@@ -63,5 +63,5 @@ curl -X POST \
   -H 'Content-Type: application/json' \
   -d '{"doi": "10.1016/j.jneumeth.2015.01.020"}'
 ```
-
 **NOTA:** Dependiendo si se tiene una GPU y el modelo, se podrá instalar una versión diferente de la biblioteca tensorflow
+**NOTA:** Añadir paso para indicar como cargar las imagenes
