@@ -43,7 +43,7 @@ Si se usa windows:
 ```
 $ python .\src\app.py
 ```
-7. Usar Postman o curl para enviar peticiones al url /classify/ o /fetch-and-classify/  
+7. Usar Postman o curl para enviar peticiones al url /classify/ , /fetch-and-classify/ o /plot-predictions/  
 Ejemplo:
 ```
 curl -X POST \
@@ -57,4 +57,11 @@ curl -X POST \
   -H 'Content-Type: application/json' \
   -d '{"doi": "10.1016/j.jneumeth.2015.01.020"}'
 ```
+```
+curl -X POST \
+  http://127.0.0.1:5000/fetch-and-classify/ \
+  -H 'Content-Type: application/json' \
+  -d '{"doi": "10.1016/j.jneumeth.2015.01.020"}'
+```
+
 **NOTA:** Dependiendo si se tiene una GPU y el modelo, se podrá instalar una versión diferente de la biblioteca tensorflow
