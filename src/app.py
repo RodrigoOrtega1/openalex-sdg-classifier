@@ -14,7 +14,7 @@ def classify():
 
     try:
         result = get_predictions(text)
-        return jsonify(result)
+        return jsonify({"text": text, "predictions": result})
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
 
@@ -42,7 +42,7 @@ def fetch_and_classify():
         text_to_classify = f"{title}. {abstract}"
         
         result = get_predictions(text_to_classify)
-        return jsonify(result)
+        return jsonify({"text": text_to_classify, "predictions": result})
     except requests.exceptions.HTTPError as e:
         return jsonify({"msg": f"Failed to fetch data from OpenAlex: {str(e)}"}), e.response.status_code
     except Exception as e:
