@@ -1,1 +1,0 @@
-web: gunicorn app:app -w $WEB_WORKERS_PER_DYNO --timeout 120
